@@ -6,13 +6,24 @@ export class TaskManager {
   private users: User[] = [];
 
   addUser(username: string, email: string): void {
+    const existingUser = this.users.find((user) => user.username === username);
+
+    if (existingUser) {
+      console.log(
+        `L'utilisateur avec le nom d'utilisateur ${username} existe déjà.`,
+      );
+      return;
+    }
+
     const newUser: User = {
       id: this.users.length + 1,
       username,
       email,
     };
+
     this.users.push(newUser);
-    console.log(`Un utilisateur ${username} ajouté avec un Id ${newUser.id}.`);
+
+    console.log(`Nouvel utilisateur créé : ${username} (ID ${newUser.id})`);
   }
 
   listUsers(): void {
