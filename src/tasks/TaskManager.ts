@@ -1,21 +1,22 @@
-import { Tasks } from './Tasks';
-import { User } from './User';
+// src/tasks/TaskManager.ts
+import {
+  CreateUserRequest,
+  CreateUserResponse,
+} from '../../backend/serverTypes';
 
-export class TaskManager {
-  private tasks: Tasks[] = [];
-  private users: User[] = [];
+export default class TaskManager {
+  private users: CreateUserResponse[] = [];
 
-  addUser(username: string, email: string): void {
-    const existingUser = this.users.find((user) => user.username === username);
-
-    if (existingUser) {
+  createUser(request: CreateUserRequest): CreateUserResponse | null {
+    const { username, email } = request;
+    if (this.users.some((user) => user.username === username)) {
       console.log(
         `L'utilisateur avec le nom d'utilisateur ${username} existe déjà.`,
       );
-      return;
+      return null;
     }
 
-    const newUser: User = {
+    const newUser: CreateUserResponse = {
       id: this.users.length + 1,
       username,
       email,
@@ -24,35 +25,7 @@ export class TaskManager {
     this.users.push(newUser);
 
     console.log(`Nouvel utilisateur créé : ${username} (ID ${newUser.id})`);
-  }
 
-  listUsers(): void {
-    console.log('Utilisateurs:');
-    this.users.forEach((user) => {
-      console.log(`${user.id}. ${user.username}(${user.email})`);
-    });
-  }
-
-  deleteUser(username: string): void {
-    const deletedUser = this.users.find((user) => user.username === username);
-
-    if (deletedUser) {
-      this.users = this.users.filter((user) => user.username !== username);
-      console.log(`L'utilisateur ${username} a été supprimé.`);
-
-      console.log('Liste des utilisateurs après la suppression :');
-      this.listUsers();
-    } else {
-      console.log(`L'utilisateur ${username} n'existe pas.`);
-    }
-  }
-
-  addTask(description: string): void {
-    const newTask = new Tasks(description);
-    this.tasks.push(newTask);
-  }
-
-  getTasks(): Tasks[] {
-    return this.tasks;
+    return newUser;
   }
 }
